@@ -18,15 +18,12 @@ const App = () => {
   // Gönderi nesneleri dizisini tutmak için "gonderiler" adlı bir state oluşturun, **sahteVeri'yi yükleyin**.
   const [gonderiler, setGonderiler] = useState(sahteVeri);
   const [arama, setArama] = useState("");
-  const [begenilenler, setBegenilenler] = useState([]);
 
   const gonderiyiBegen = (gonderiID) => {
     setGonderiler(
       gonderiler.map((item) => {
-        if (item.id === gonderiID && !begenilenler.includes(gonderiID)) {
-          item.likes++;
-          begenilenler.push(gonderiID);
-          setBegenilenler(begenilenler);
+        if (item.id === gonderiID) {
+          item.likes = item.likes + 1;
         }
         return item;
       })
@@ -42,14 +39,6 @@ const App = () => {
         - gönderinin idsi "gonderiID" ile eşleşirse, istenen değerlerle yeni bir gönderi nesnesi döndürün.
         - aksi takdirde, sadece gönderi nesnesini değiştirmeden döndürün.
      */
-    const updatedPosts = gonderiler.map((gonderi) => {
-      if (gonderiID === gonderi.id) {
-        gonderi.likes++;
-      }
-      return gonderi;
-    });
-
-    setGonderiler(updatedPosts);
   };
 
   const textChangeHandler = (evn) => {
@@ -71,6 +60,7 @@ const App = () => {
         textChangeHandler={textChangeHandler}
       />
       <Gonderiler gonderiler={gonderiler} gonderiyiBegen={gonderiyiBegen} />
+
       {/* Yukarıdaki metni projeye başladığınızda silin*/}
       {/* AramaÇubuğu ve Gönderiler'i render etmesi için buraya ekleyin */}
       {/* Her bileşenin hangi proplara ihtiyaç duyduğunu kontrol edin, eğer ihtiyaç varsa ekleyin! */}

@@ -16,12 +16,21 @@ import "./App.css";
 
 const App = () => {
   // Gönderi nesneleri dizisini tutmak için "gonderiler" adlı bir state oluşturun, **sahteVeri'yi yükleyin**.
-  const [gonderiler] = useState(sahteVeri);
-  // Artık sahteVeri'ye ihtiyacınız olmayacak.
-  // Arama çubuğunun çalışması için , arama kriterini tutacak başka bir state'e ihtiyacımız olacak.
-  const [arama] = useState();
+  const [gonderiler, setGonderiler] = useState(sahteVeri);
+  const [arama, setArama] = useState("");
+  const [begenilenler, setBegenilenler] = useState([]);
 
   const gonderiyiBegen = (gonderiID) => {
+    setGonderiler(
+      gonderiler.map((item) => {
+        if (item.id === gonderiID && !begenilenler.includes(gonderiID)) {
+          item.likes++;
+          begenilenler.push(gonderiID);
+          setBegenilenler(begenilenler);
+        }
+        return item;
+      })
+    );
     /*
       Bu fonksiyon, belirli bir id ile gönderinin beğeni sayısını bir artırma amacına hizmet eder.
 
@@ -33,12 +42,35 @@ const App = () => {
         - gönderinin idsi "gonderiID" ile eşleşirse, istenen değerlerle yeni bir gönderi nesnesi döndürün.
         - aksi takdirde, sadece gönderi nesnesini değiştirmeden döndürün.
      */
+    const updatedPosts = gonderiler.map((gonderi) => {
+      if (gonderiID === gonderi.id) {
+        gonderi.likes++;
+      }
+      return gonderi;
+    });
+
+    setGonderiler(updatedPosts);
+  };
+
+  const textChangeHandler = (evn) => {
+    setArama(evn.target.value);
+    const filterGonderiler = sahteVeri.filter((item) => {
+      return (
+        item.username.includes(evn.target.value) ||
+        item.timestamp.includes(evn.target.value)
+      );
+    });
+    setGonderiler(filterGonderiler);
   };
 
   return (
     <div className="App">
-      <AramaCubugu arama={arama} />
-      <Gonderiler gonderiler={gonderiler} />
+      <AramaCubugu
+        arama={arama}
+        setArama={setArama}
+        textChangeHandler={textChangeHandler}
+      />
+      <Gonderiler gonderiler={gonderiler} gonderiyiBegen={gonderiyiBegen} />
       {/* Yukarıdaki metni projeye başladığınızda silin*/}
       {/* AramaÇubuğu ve Gönderiler'i render etmesi için buraya ekleyin */}
       {/* Her bileşenin hangi proplara ihtiyaç duyduğunu kontrol edin, eğer ihtiyaç varsa ekleyin! */}
